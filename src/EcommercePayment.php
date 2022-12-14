@@ -34,16 +34,20 @@ class EcommercePayment
             'debug' => false,
         ])->post(config('ecommerce.query_url'), $body);
 
-        $xml = simplexml_load_string($response->body());
-        $json = json_encode($xml);
-        $array = json_decode($json, true);
+        try {
+            $xml = simplexml_load_string($response->body());
+            $json = json_encode($xml);
+            $array = json_decode($json, true);
 
-        $array = self::array_change_key_case_recursive($array);
-        $transaction = $array['transaction'];
+            $array = self::array_change_key_case_recursive($array);
+            $transaction = $array['transaction'];
 
-        $transaction['transaction_status'] = self::$transactionStatus[$transaction['txn_status']];
+            $transaction['transaction_status'] = self::$transactionStatus[$transaction['txn_status']];
 
-        return $transaction;
+            return $transaction;
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     protected function array_change_key_case_recursive($arr)
