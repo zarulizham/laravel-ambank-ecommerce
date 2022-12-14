@@ -21,7 +21,7 @@ class EcommercePayment
     public function query($merchantTransactionId, $amount)
     {
         $body = [
-            'AMOUNT' => number_format($amount, 2),
+            'AMOUNT' => number_format($amount, 2, '.', ''),
             'MERCHANT_ACC_NO' => config('ecommerce.merchant_account_no'),
             'MERCHANT_TRANID' => $merchantTransactionId,
             'RESPONSE_TYPE' => 'XML',
