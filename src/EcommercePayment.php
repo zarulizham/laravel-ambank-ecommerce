@@ -2,6 +2,7 @@
 
 namespace ZarulIzham\EcommercePayment;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class EcommercePayment
@@ -30,11 +31,15 @@ class EcommercePayment
 
         $body['SECURE_SIGNATURE'] = $this->signMessage($body);
 
-        $response = Http::withoutVerifying()->asForm()->withOptions([
-            'debug' => false,
-        ])->post(config('ecommerce.query_url'), $body);
+        $response = Http::withoutVerifying()
+            ->asForm()
+            ->retry(2)
+            ->timeout(15)
+            ->connectTimeout(40)
+            ->post(config('ecommerce.query_url'), $body);
 
         try {
+
             $xml = simplexml_load_string($response->body());
             $json = json_encode($xml);
             $array = json_decode($json, true);
