@@ -2,7 +2,6 @@
 
 namespace ZarulIzham\EcommercePayment;
 
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class EcommercePayment
