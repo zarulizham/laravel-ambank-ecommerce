@@ -6,11 +6,11 @@ use Exception;
 
 class InvalidReferrer extends Exception
 {
-     /**
-     * Report the exception.
-     *
-     * @return bool|null
-     */
+    /**
+    * Report the exception.
+    *
+    * @return bool|null
+    */
     public function report()
     {
         return true;

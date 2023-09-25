@@ -2,6 +2,7 @@
 
 namespace ZarulIzham\EcommercePayment\Interfaces;
 
-interface HasLabel {
-    public function label() : string;
+interface HasLabel
+{
+    public function label(): string;
 }

@@ -2,9 +2,9 @@
 
 namespace ZarulIzham\EcommercePayment\Messages;
 
+use ZarulIzham\EcommercePayment\Contracts\Message as Contract;
 use ZarulIzham\EcommercePayment\DataObjects\RedirectData;
 use ZarulIzham\EcommercePayment\Models\EcommerceTransaction;
-use ZarulIzham\EcommercePayment\Contracts\Message as Contract;
 
 class AuthorizationConfirmation implements Contract
 {

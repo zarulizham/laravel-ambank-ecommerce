@@ -2,10 +2,10 @@
 
 namespace ZarulIzham\EcommercePayment\Enums;
 
-use Spatie\LaravelData\Casts\Cast;
 use ZarulIzham\EcommercePayment\Interfaces\HasLabel;
 
-enum TransactionStatus : string implements HasLabel {
+enum TransactionStatus: string implements HasLabel
+{
     case PENDING_NOT_AUTHORIZED = "N";
     case AUTHORIZED = "A";
     case CAPTURED = "C";
@@ -15,9 +15,9 @@ enum TransactionStatus : string implements HasLabel {
     case EXCEPTION = "E";
     case NOT_APPROVED = 'F';
     case BLACKLISTED = 'BL';
-    case BLOCKED =  'B';
+    case BLOCKED = 'B';
 
-    public function label() : string
+    public function label(): string
     {
         return match($this) {
             self::PENDING_NOT_AUTHORIZED => 'Pending/Not Authorized',

@@ -2,9 +2,9 @@
 
 namespace ZarulIzham\EcommercePayment\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EcommerceTransaction extends Model
 {
@@ -33,7 +33,7 @@ class EcommerceTransaction extends Model
         'response_payload' => 'object',
     ];
 
-    public function transactionable() : MorphTo
+    public function transactionable(): MorphTo
     {
         return $this->morphTo();
     }

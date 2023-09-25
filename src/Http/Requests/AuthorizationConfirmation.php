@@ -2,8 +2,8 @@
 
 namespace ZarulIzham\EcommercePayment\Http\Requests;
 
-use ZarulIzham\EcommercePayment\Exceptions\InvalidReferrer;
 use Illuminate\Foundation\Http\FormRequest;
+use ZarulIzham\EcommercePayment\Exceptions\InvalidReferrer;
 use ZarulIzham\EcommercePayment\Messages\AuthorizationConfirmation as AuthorizationConfirmationMessage;
 
 class AuthorizationConfirmation extends FormRequest
