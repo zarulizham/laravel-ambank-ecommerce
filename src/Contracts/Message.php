@@ -11,10 +11,4 @@ interface Message
      * @return mixed
      */
     public function handle(array $options);
-
-    /**
-     * Format data for checksum
-     * @return string
-     */
-    public function format();
 }
