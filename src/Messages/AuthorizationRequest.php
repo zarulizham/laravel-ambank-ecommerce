@@ -3,11 +3,21 @@
 namespace ZarulIzham\EcommercePayment\Messages;
 
 use Illuminate\Support\Facades\Validator;
-use ZarulIzham\EcommercePayment\Contracts\Message as Contract;
 use ZarulIzham\EcommercePayment\Models\EcommerceTransaction;
+use ZarulIzham\EcommercePayment\Contracts\Message as Contract;
 
 class AuthorizationRequest implements Contract
 {
+    private $dataToSign;
+    private $reference_id;
+    private $transactionable_id;
+    private $transactionable_type;
+    private $amount;
+    private $merchantAccountNo;
+    private $responseType;
+    private $directUrl;
+    private $transactionType;
+    private $description;
     /**
      * Message Url
      */
@@ -40,11 +50,13 @@ class AuthorizationRequest implements Contract
                 'TXN_DESC' => 'required',
                 'AMOUNT' => 'required|numeric',
                 'reference_id' => 'nullable',
+                'transactionable_id' => 'nullable|numeric',
+                'transactionable_type' => 'nullable|string|max:100',
             ],
             [
                 'AMOUNT.required' => __('Amount is required.'),
                 'AMOUNT.numeric' => __('Amount must be numeric.'),
-                'AMOUNT.TXN_DESC' => __('Transaction Description is required.'),
+                'TXN_DESC.required' => __('Transaction Description is required.'),
             ],
         )->validate();
 
@@ -60,18 +72,9 @@ class AuthorizationRequest implements Contract
     }
 
     /**
-     * Format data for checksum
-     * @return string
-     */
-    public function format()
-    {
-        return $this->list()->join('|');
-    }
-
-    /**
      * returns collection of all fields
      *
-     * @return collection
+     * @return \Illuminate\Support\Collection
      */
     public function list()
     {
@@ -85,7 +88,8 @@ class AuthorizationRequest implements Contract
     {
         $transaction = new EcommerceTransaction();
         $transaction->reference_id = $this->reference_id;
-        $transaction->transaction_id = $this->reference_id;
+        $transaction->transactionable_id = $this->transactionable_id;
+        $transaction->transactionable_type = $this->transactionable_type;
         $transaction->amount = $this->amount;
         $transaction->request_payload = $this->list();
         $transaction->save();
@@ -93,10 +97,6 @@ class AuthorizationRequest implements Contract
 
     public function signMessage($data)
     {
-        $allowedParams = [
-            'MERCHANT_ACC_NO', 'MERCHANT_TRANID', 'AMOUNT', 'TRANSACTION_TYPE', 'SECURE_SIGNATURE', 'RESPONSE_TYPE', 'TXN_URL', 'RETURN_URL', 'TXN_DESC', 'CUSTOMER_ID', 'FR_HIGHRISK_EMAIL', 'FR_HIGHRISK_COUNTRY', 'FR_BILLING_ADDRESS', 'FR_SHIPPING_ADDRESS', 'FR_SHIPPING_COST', 'FR_PURCHASE_HOUR', 'CUSTOMER_IP', 'PYMT_IND', 'PYMT_CRITERIA',
-        ];
-
         $this->dataToSign = array_merge($data, [
             'AMOUNT' => $this->amount,
             'MERCHANT_ACC_NO' => $this->merchantAccountNo,
@@ -109,10 +109,14 @@ class AuthorizationRequest implements Contract
 
         ksort($this->dataToSign);
 
-        unset($this->dataToSign['reference_id']);
+        unset(
+            $this->dataToSign['reference_id'],
+            $this->dataToSign['transactionable_id'],
+            $this->dataToSign['transactionable_type']
+        );
 
         $message = config('ecommerce.password') .  implode('', array_values($this->dataToSign));
-        $this->signature = hash('sha512', $message);
-        $this->dataToSign['SECURE_SIGNATURE'] = $this->signature;
+        $signature = hash('sha512', $message);
+        $this->dataToSign['SECURE_SIGNATURE'] = $signature;
     }
 }

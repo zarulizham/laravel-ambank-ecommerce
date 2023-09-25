@@ -2,11 +2,14 @@
 
 namespace ZarulIzham\EcommercePayment\Messages;
 
-use ZarulIzham\EcommercePayment\Contracts\Message as Contract;
+use ZarulIzham\EcommercePayment\DataObjects\RedirectData;
 use ZarulIzham\EcommercePayment\Models\EcommerceTransaction;
+use ZarulIzham\EcommercePayment\Contracts\Message as Contract;
 
 class AuthorizationConfirmation implements Contract
 {
+    public $responseData;
+
     /**
      * handle a message
      *
@@ -15,52 +18,26 @@ class AuthorizationConfirmation implements Contract
      */
     public function handle($options)
     {
-        $this->amount = @$options['AMOUNT'];
-        $this->responseCode = @$options['RESPONSE_CODE'];
-        $this->transactionId = @$options['TRANSACTION_ID'];
-        $this->merchantTransactionId = @$options['MERCHANT_TRANID'];
-        $this->responseDescription = @$options['RESPONSE_DESC'];
-        $this->responseData = @$options;
 
+        $this->responseData = RedirectData::from($options);
         $this->saveTransaction();
 
         return $this;
     }
 
     /**
-     * Format data for checksum
-     * @return string
-     */
-    public function format()
-    {
-        return $this->list()->join('|');
-    }
-
-    /**
-     * returns collection of all fields
-     *
-     * @return collection
-     */
-    public function list()
-    {
-        return collect($this->responseData);
-    }
-
-    /**
      * Save response to transaction
      *
-     * @return FpxTransaction
+     * @return \ZarulIzham\EcommercePayment\Models\EcommerceTransaction;
      */
     public function saveTransaction(): EcommerceTransaction
     {
-        $transaction = EcommerceTransaction::where(['transaction_id' => $this->merchantTransactionId])->firstOrNew();
+        $data = array_merge($this->responseData->toArray(), [
+            'response_payload' => $this->responseData->toArray(),
+        ]);
 
-        $transaction->response_code = $this->responseCode;
-        $transaction->response_description = $this->responseDescription;
-        $transaction->amount = $this->amount;
-        $transaction->response_payload = $this->list();
-        $transaction->save();
-
-        return $transaction;
+        return EcommerceTransaction::updateOrCreate([
+            'reference_id' => $this->responseData->merchant_transaction_id,
+        ], $data);
     }
 }

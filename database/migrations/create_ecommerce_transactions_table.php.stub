@@ -10,13 +10,16 @@ return new class extends Migration
     {
         Schema::create('ecommerce_transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('reference_id')->nullable();
             $table->string('transaction_id')->nullable();
+            $table->bigInteger('transactionable_id')->nullable();
+            $table->string('transactionable_type', 100)->nullable();
+            $table->string('reference_id')->nullable();
             $table->double('amount', 15, 2)->nullable()->default(0);
             $table->string('response_code')->nullable();
             $table->string('response_description', 300)->nullable();
+            $table->dateTime('completed_at')->nullable();
             $table->json('request_payload');
-            $table->json('response_payload')->nullable();
+            $table->json('request_payload')->nullable();
             $table->timestamps();
         });
     }
