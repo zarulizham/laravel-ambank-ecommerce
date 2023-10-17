@@ -30,7 +30,7 @@ class RedirectData extends Data
         #[MapInputName('RESPONSE_DESC')]
         public string $response_description,
         #[MapInputName('TRANSACTION_ID')]
-        public string $transaction_id,
+        public ?string $transaction_id,
         #[
             MapInputName('TRAN_DATE'),
             WithCast(DateTimeInterfaceCast::class, format: 'd-m-Y H:i:s')
