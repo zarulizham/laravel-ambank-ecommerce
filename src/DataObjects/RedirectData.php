@@ -45,7 +45,7 @@ class RedirectData extends Data
             MapInputName('TXN_STATUS'),
             WithCast(EnumCast::class)
         ]
-        public TransactionStatus $transaction_status,
+        public ?TransactionStatus $transaction_status,
         #[MapInputName('SECURE_SIGNATURE')]
         public string $secure_signature,
     ) {
