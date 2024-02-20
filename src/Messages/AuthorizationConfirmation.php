@@ -10,6 +10,8 @@ class AuthorizationConfirmation implements Contract
 {
     public $responseData;
 
+    public $ecommerceTransaction;
+
     /**
      * handle a message
      *
@@ -20,7 +22,7 @@ class AuthorizationConfirmation implements Contract
     {
 
         $this->responseData = RedirectData::from($options);
-        $this->saveTransaction();
+        $this->ecommerceTransaction = $this->saveTransaction();
 
         return $this;
     }
