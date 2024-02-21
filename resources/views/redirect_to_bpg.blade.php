@@ -14,7 +14,6 @@
             font-weight: 200;
             color: grey
         }
-
     </style>
 </head>
 
@@ -26,12 +25,12 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <form x-data x-init="$refs.submit.click()" action="https://3dgatewaytest.ambankgroup.com/BPG/admin/payment/PaymentWindow.jsp" method="post">
+                    <form x-data x-init="$refs.submit.click()" action="{{ config('ecommerce.payment_window_url') }}" method="post">
                         @foreach ($request->list() as $index => $data)
-                        <div class="form-group mb-3">
-                            <label for="">{{ $index }}</label>
-                            <input class="form-control" type="hidden" name="{{ $index }}" value="{{ $data }}">
-                        </div>
+                            <div class="form-group mb-3">
+                                <label for="">{{ $index }}</label>
+                                <input class="form-control" type="hidden" name="{{ $index }}" value="{{ $data }}">
+                            </div>
                         @endforeach
                         <button x-ref="submit" class="btn btn-primary">Submit</button>
                     </form>
