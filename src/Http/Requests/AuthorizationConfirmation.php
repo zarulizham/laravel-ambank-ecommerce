@@ -51,8 +51,17 @@ class AuthorizationConfirmation extends FormRequest
 
     protected function verifyReferrer()
     {
-        if (! in_array($this->headers->get('referer'), ["https://3dgatewaytest.ambankgroup.com/","https://3dgateway.ambankgroup.com/"])) {
+        $referrer = $this->headers->get('referer');
+
+        if (config('app.env') == 'production') {
+            $verified = str_starts_with($referrer, "https://3dgateway.ambankgroup.com/");
+        } else {
+            $verified = str_starts_with($referrer, "https://3dgatewaytest.ambankgroup.com/");
+        }
+
+        if (!$verified) {
             throw new InvalidReferrer();
         }
+        return true;
     }
 }
