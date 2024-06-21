@@ -4,7 +4,7 @@ namespace ZarulIzham\EcommercePayment\Enums;
 
 use ZarulIzham\EcommercePayment\Interfaces\HasLabel;
 
-enum TransactionStatus: string implements HasLabel
+enum TransactionStatus : string implements HasLabel
 {
     case PENDING_NOT_AUTHORIZED = "N";
     case AUTHORIZED = "A";

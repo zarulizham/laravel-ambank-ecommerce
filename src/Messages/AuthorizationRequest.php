@@ -18,6 +18,10 @@ class AuthorizationRequest implements Contract
     private $directUrl;
     private $transactionType;
     private $description;
+    private $email;
+    private $country_code;
+    private $mobile_number;
+
     /**
      * Message Url
      */
@@ -52,6 +56,9 @@ class AuthorizationRequest implements Contract
                 'reference_id' => 'nullable',
                 'transactionable_id' => 'nullable|numeric',
                 'transactionable_type' => 'nullable|string|max:100',
+                'email' => 'nullable|email:rfc,dns',
+                'country_code' => 'nullable|numeric|min:1|max:999',
+                'mobile_number' => 'nullable|string|min:9|max:12',
             ],
             [
                 'AMOUNT.required' => __('Amount is required.'),
@@ -100,6 +107,7 @@ class AuthorizationRequest implements Contract
         $this->dataToSign = array_merge($data, [
             'AMOUNT' => $this->amount,
             'MERCHANT_ACC_NO' => $this->merchantAccountNo,
+            'CARDHOLDER_INFO' => $this->cardHolderInfo(),
             'MERCHANT_TRANID' => $this->reference_id,
             'RESPONSE_TYPE' => $this->responseType,
             'RETURN_URL' => $this->directUrl,
@@ -112,11 +120,25 @@ class AuthorizationRequest implements Contract
         unset(
             $this->dataToSign['reference_id'],
             $this->dataToSign['transactionable_id'],
-            $this->dataToSign['transactionable_type']
+            $this->dataToSign['transactionable_type'],
+            $this->dataToSign['mobile_number'],
+            $this->dataToSign['country_code'],
+            $this->dataToSign['email'],
         );
 
         $message = config('ecommerce.password') .  implode('', array_values($this->dataToSign));
         $signature = hash('sha512', $message);
         $this->dataToSign['SECURE_SIGNATURE'] = $signature;
+    }
+
+    public function cardHolderInfo()
+    {
+        return json_encode([
+            'emailAdd' => $this->email,
+            'mobilePhone' => [
+                'cc' => $this->country_code,
+                'subscriber' => $this->mobile_number,
+            ]
+        ]);
     }
 }
