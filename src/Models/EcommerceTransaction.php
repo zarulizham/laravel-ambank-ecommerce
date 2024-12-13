@@ -31,6 +31,7 @@ class EcommerceTransaction extends Model
     protected $casts = [
         'request_payload' => 'object',
         'response_payload' => 'object',
+        'completed_at' => 'datetime',
     ];
 
     public function transactionable(): MorphTo
